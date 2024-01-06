@@ -40,7 +40,6 @@ public class DoctorServiceImpl implements DoctorService {
        if (selectDoctor.isEmpty()){
            throw new RuntimeException("Doctor Is Not Found");
        }
-
        Doctor doc = selectDoctor.get();
        return new ResponseDoctorDto(
                doc.getId(), doc.getName(), doc.getAddress(), doc.getContact(), doc.getSalary()
@@ -50,8 +49,16 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public void deleteDoctor(long id) {
 
+        Optional<Doctor> selectDoctor =doctorRepo.findById(id);
+        if (selectDoctor.isEmpty()){
+            throw new RuntimeException("Doctor Is Not Found");
+        }
+        doctorRepo.deleteById(selectDoctor.get().getId());
+
     }
 
+
+    /////return all doctors according to the name
     @Override
     public List<ResponseDoctorDto> findDoctorByName(String name) {
         List<Doctor> allByName =  doctorRepo.findAllByName(name);
