@@ -6,8 +6,10 @@ import com.devstack.healthcare.system.entity.Doctor;
 import com.devstack.healthcare.system.repo.DoctorRepo;
 import com.devstack.healthcare.system.service.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -68,10 +70,31 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public void updateDoctor(long id, RequestDoctorDto dto) {
 
+        Optional<Doctor> selectDoctor =doctorRepo.findById(id);
+        if (selectDoctor.isEmpty()){
+            throw new RuntimeException("Doctor Is Not Found");
+        }
+        Doctor doc = selectDoctor.get();
+        doc.setName(dto.getName());
+        doc.setAddress(dto.getAddress());
+        doc.setContact(dto.getContact());
+        doc.setSalary(dto.getSalary());
+        doctorRepo.save(doc);
+
     }
 
     @Override
     public List<ResponseDoctorDto> getAllDoctors(String searchText, int page, int size) {
-        return null;
+        searchText ="%"+searchText+"%";
+        List<Doctor> doctors = doctorRepo.searchDoctors(searchText, PageRequest.of(page,size));
+        List<ResponseDoctorDto> dtos = new ArrayList<>();
+        doctors.forEach(doc->{
+            dtos.add(
+                    new ResponseDoctorDto(
+                            doc.getId(), doc.getName(), doc.getAddress(), doc.getContact(), doc.getSalary()
+                    )
+            );
+        });
+        return dtos;
     }
 }
