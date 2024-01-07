@@ -50,18 +50,21 @@ public class DoctorController {
     public ResponseEntity<StandardResponse> deleteDoctor(@PathVariable long id){
         doctorService.deleteDoctor(id);
         return new ResponseEntity<>(
-                new StandardResponse(20,"Deleted Data",id),
+                new StandardResponse(204,"Deleted Data",id),
                 HttpStatus.NO_CONTENT
         );
 
     }
 
     @GetMapping(path = "/list", params = {"searchText","page","size"})
-    public String findAllDoctor(
+    public ResponseEntity<StandardResponse> findAllDoctor(
             @RequestParam String searchText,
             @RequestParam int page,
             @RequestParam int size
     ){
-        return "FindAllDoctor";
+        return new ResponseEntity<>(
+                new StandardResponse(200,"Data List",doctorService.getAllDoctors(searchText,page,size)),
+                HttpStatus.OK
+        );
     }
 }
