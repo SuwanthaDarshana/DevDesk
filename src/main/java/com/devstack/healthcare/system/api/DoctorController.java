@@ -17,7 +17,6 @@ public class DoctorController {
         this.doctorService = doctorService;
     }
 
-
     @PostMapping
     public ResponseEntity<StandardResponse> createDoctor(@RequestBody RequestDoctorDto doctorDto){
         doctorService.createDoctor(doctorDto);
@@ -25,25 +24,36 @@ public class DoctorController {
                 new StandardResponse(201,"Doctor was saved",doctorDto.getName()),
                 HttpStatus.CREATED
         );
-        return doctorDto.getName();
     }
 
     @GetMapping("/{id}")
-    public String findDoctor(@PathVariable String id){
-        return id+"";
+    public ResponseEntity<StandardResponse> findDoctor(@PathVariable long id){
+        return new ResponseEntity<>(
+                new StandardResponse(200,"Doctor Data",doctorService.getDoctor(id)),
+                HttpStatus.OK
+        );
     }
 
     @PutMapping(params = "id")     //update through requesting ID
-    public String updateDoctor(
-            @RequestParam String id,
+    public ResponseEntity<StandardResponse> updateDoctor(
+            @RequestParam long id,
             @RequestBody RequestDoctorDto doctorDto){
 
-        return doctorDto.toString();
+        doctorService.updateDoctor(id,doctorDto);
+        return new ResponseEntity<>(
+                new StandardResponse(201,"Update Data",doctorDto.getName()),
+                HttpStatus.CREATED
+        );
     }
 
     @DeleteMapping("/{id}")
-    public String deleteDoctor(@PathVariable String id){
-        return id+"";
+    public ResponseEntity<StandardResponse> deleteDoctor(@PathVariable long id){
+        doctorService.deleteDoctor(id);
+        return new ResponseEntity<>(
+                new StandardResponse(20,"Deleted Data",id),
+                HttpStatus.NO_CONTENT
+        );
+
     }
 
     @GetMapping(path = "/list", params = {"searchText","page","size"})
