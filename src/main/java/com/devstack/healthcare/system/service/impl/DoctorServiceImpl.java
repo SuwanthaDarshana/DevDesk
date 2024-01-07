@@ -4,8 +4,10 @@ import com.devstack.healthcare.system.dto.request.RequestDoctorDto;
 import com.devstack.healthcare.system.dto.response.ResponseDoctorDto;
 import com.devstack.healthcare.system.dto.response.paginated.PaginatedDoctorResponseDto;
 import com.devstack.healthcare.system.entity.Doctor;
+import com.devstack.healthcare.system.exception.EntryNotFoundException;
 import com.devstack.healthcare.system.repo.DoctorRepo;
 import com.devstack.healthcare.system.service.DoctorService;
+import com.devstack.healthcare.system.util.mapper.DoctorMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -20,9 +22,12 @@ public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepo doctorRepo;
 
+    private final DoctorMapper doctorMapper;
+
     @Autowired
-    public DoctorServiceImpl(DoctorRepo doctorRepo) {
+    public DoctorServiceImpl(DoctorRepo doctorRepo, DoctorMapper doctorMapper) {
         this.doctorRepo = doctorRepo;
+        this.doctorMapper = doctorMapper;
     }
 
     UUID uuid = UUID.randomUUID();
@@ -41,12 +46,9 @@ public class DoctorServiceImpl implements DoctorService {
     public ResponseDoctorDto getDoctor(long id) {    /////exception handling
        Optional<Doctor> selectDoctor =doctorRepo.findById(id);
        if (selectDoctor.isEmpty()){
-           throw new RuntimeException("Doctor Is Not Found");
+           throw new EntryNotFoundException("Doctor Is Not Found");
        }
-       Doctor doc = selectDoctor.get();
-       return new ResponseDoctorDto(
-               doc.getId(), doc.getName(), doc.getAddress(), doc.getContact(), doc.getSalary()
-       );
+       return doctorMapper.toResponseDoctorDto(selectDoctor.get());
     }
 
     @Override
@@ -54,7 +56,7 @@ public class DoctorServiceImpl implements DoctorService {
 
         Optional<Doctor> selectDoctor =doctorRepo.findById(id);
         if (selectDoctor.isEmpty()){
-            throw new RuntimeException("Doctor Is Not Found");
+            throw new EntryNotFoundException("Doctor Is Not Found");
         }
         doctorRepo.deleteById(selectDoctor.get().getId());
 
@@ -73,7 +75,7 @@ public class DoctorServiceImpl implements DoctorService {
 
         Optional<Doctor> selectDoctor =doctorRepo.findById(id);
         if (selectDoctor.isEmpty()){
-            throw new RuntimeException("Doctor Is Not Found");
+            throw new EntryNotFoundException("Doctor Is Not Found");
         }
         Doctor doc = selectDoctor.get();
         doc.setName(dto.getName());
@@ -89,14 +91,14 @@ public class DoctorServiceImpl implements DoctorService {
         searchText ="%"+searchText+"%";
         List<Doctor> doctors = doctorRepo.searchDoctors(searchText, PageRequest.of(page,size));
         long doctorCount = doctorRepo.countDoctors(searchText);
-        List<ResponseDoctorDto> dtos = new ArrayList<>();
-        doctors.forEach(doc->{
+        List<ResponseDoctorDto> dtos = doctorMapper.toResponseDoctorDtoList(doctors);
+        /*doctors.forEach(doc->{
             dtos.add(
                     new ResponseDoctorDto(
                             doc.getId(), doc.getName(), doc.getAddress(), doc.getContact(), doc.getSalary()
                     )
             );
-        });
+        });*/
         return new PaginatedDoctorResponseDto(
                 doctorCount,
                 dtos
