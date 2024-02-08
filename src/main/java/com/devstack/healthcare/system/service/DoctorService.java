@@ -10,11 +10,11 @@ public interface DoctorService {
 
     public void createDoctor(RequestDoctorDto dto);
 
-    public ResponseDoctorDto getDoctor(long id);
+    public ResponseDoctorDto getDoctor(long id); //create response dto because dat get
 
     public void deleteDoctor(long id);
     public List<ResponseDoctorDto> findDoctorByName(String name);
     public void updateDoctor(long id,RequestDoctorDto dto);
 
-    public PaginatedDoctorResponseDto getAllDoctors(String searchText, int page, int size);
+    public PaginatedDoctorResponseDto getAllDoctors(String searchText, int page, int size);   ///Related to Paginated
 }

@@ -11,6 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class PaginatedDoctorResponseDto {
-    private long count;
-    private List<ResponseDoctorDto> dataList;
+    private long count;                                 /////Data count
+    private List<ResponseDoctorDto> dataList;           ////Get Data list from Response doctorDTO (Doctor Service)
 }

@@ -13,7 +13,7 @@ public class DoctorController {
 
     private final DoctorService doctorService;
 
-    public DoctorController(DoctorService doctorService) {
+    public DoctorController(DoctorService doctorService) {       ////Constructor
         this.doctorService = doctorService;
     }
 
@@ -56,6 +56,7 @@ public class DoctorController {
 
     }
 
+    ////Use pagination searchtext,page,size
     @GetMapping(path = "/list", params = {"searchText","page","size"})
     public ResponseEntity<StandardResponse> findAllDoctor(
             @RequestParam String searchText,

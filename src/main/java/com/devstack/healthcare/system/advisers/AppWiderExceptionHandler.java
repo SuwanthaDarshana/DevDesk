@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice  ////e
+@RestControllerAdvice  ////exception Management Annotation
 public class AppWiderExceptionHandler {
 
     @ExceptionHandler(EntryNotFoundException.class)
